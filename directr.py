@@ -4,7 +4,7 @@ import sys, os, time, datetime, subprocess
 def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, display=False, delay=10.):
     """Search directories for src files.
 
-    TODO: Testing with non-ascii chars
+    TODO: Testing with non-ascii chars..
 
     Note:
         For Windows, optionally display src files with notepad.exe,
@@ -29,10 +29,10 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
         >>> dr.sd4src()
         ['C:\\foo.R', 'C:\\bar.py']
         # searching multiple directories
-        >>> dr.sd4src(dirs=[os.getcwd(), 'C:\\taskschdlr'], mode=['r'])
+        >>> dr.sd4src(dirs=[os.getcwd(), 'C:\taskschdlr'], mode=['r'])
         ['C:\\foo.R', 'C:\\taskschdlr\\task.R']
         # full-blown scan using walk
-        >>> dr.sd4src(dirs=['C:\\'], log=True, walk=True)
+        >>> dr.sd4src(dirs=['C:\'], log=True, walk=True)
         ['C:\\foo.R', 'C:\\bar.py', 'C:\\taskschdlr\\task.R', 'C:\\z\\oo.js']
     """
     # setup
@@ -58,7 +58,7 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
             files = os.listdir(d)
             d_src = [f for f in files if f.lower().endswith(md)]
             g_src.extend([os.path.join(d, fl) for fl in d_src])
-            g_log.append('#'*79 + '\nDir: {}\nSrc: {}\n'.format(d, d_src))
+            g_log.append('#'*79 + '\nDir: {}\nSrc: {}\n'.format(d, ', '.join(d_src)))
             # calling notepad
             if display and len(d_src) > 0:
                 print('Displaying src files...\n')
@@ -71,15 +71,15 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
         try:  # walking with scandir.walk() for speed up compared 2 os.walk()
             import scandir
         except ImportError as e:
-            print(e + '\npip install scandir or better http://www.lfd.uci.edu/~gohlke/pythonlibs/')
+            print(e + '\npip install scandir or even better from http://www.lfd.uci.edu/~gohlke/pythonlibs/')
         for d in dirs:
             for rt, drs, fls in scandir.walk(d):  # returns unicodes
-                if '.git' in drs:  # don't go into any .git directories
-                    drs.remove('.git')
+                if u'.git' in drs:  # don't go into any .git directories
+                    drs.remove(u'.git')
                 b_rt = rt.encode(ncod, 'replace')  # converting unicodes back 2 bytes
                 d_src = [f.encode(ncod, 'replace') for f in fls if f.lower().endswith(md)]
                 g_src.extend([os.path.join(b_rt, b_fl) for b_fl in d_src])
-                g_log.append('#'*79 + '\nDir: {}\nSrc: {}\n'.format(b_rt, d_src))
+                g_log.append('#'*79 + '\nDir: {}\nSrc: {}\n'.format(b_rt, ', '.join(d_src)))
                 # calling notepad
                 if display and len(d_src) > 0:
                     print('Displaying src files...\n')
@@ -89,7 +89,7 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
                         pr.terminate()
     # exit
     dtst = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
-    g_log.append('#'*79 + '\n{} - Done.\nAll src files: {}\n'.format(dtst, g_src))
+    g_log.append('#'*79 + '\n{} - Done.\nAll src files: {}\n'.format(dtst, ', '.join(g_src)))
     print(''.join(g_log))
     if log:
         with open(os.path.join(os.getcwd(), 'sd4src.log'), 'a') as f:
