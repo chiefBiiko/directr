@@ -1,10 +1,9 @@
-# Get an eye for your src files
+# Get an eye for your src files with py2.7
 import sys, os, time, datetime, subprocess
 
 def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, display=False, delay=10.):
-    """Search directories for src files.
-
-    TODO: Testing with non-ascii chars..
+    """
+    Search directories for src files.
 
     Note:
         For Windows, optionally display src files with notepad.exe,
@@ -14,7 +13,7 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
         dirs (list): absolute paths of directories to be scanned
         mode (list): specifying the types of src files to gather, allowed:
         'r', 'py', 'js', 'c', 'java', 'markup', 'markdown', 'css', 'txt',
-        'log', 'misc'
+        'log', 'json'
         log (bool): if True, sd4src saves a log file in cwd
         walk (bool): if True, recursively walk down dirs[i]
         display (bool): if True, display src files in notepad
@@ -23,6 +22,9 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
     Returns:
         list: src files found in given directories
 
+    TODO:
+        Testing with non-ascii chars..
+        
     Examples:
         >>> import directr as dr
         # accepting all defaults, scanning cwd
@@ -39,13 +41,14 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
     g_log = []
     g_src = []
     ncod = sys.stdout.encoding
+    notepad = 'C:\\Windows\\System32\\notepad.exe'
     exts = {'r': ['.r', '.rmd'], 'py': ['.py'], 'js': ['.js'],
             'c': ['.c', '.cpp', '.cxx', '.h', '.hpp', '.hxx'],
             'java': ['.java', '.jar', '.jad'],
             'markup': ['.html', '.htm', '.xhtml', '.xht', '.xml'],
             'markdown': ['.md', '.markdown'], 
             'css': ['.css', '.scss', '.less'], 'txt': ['.txt'],
-            'log': ['.log'], 'misc': ['.json', '.pickle']}
+            'log': ['.log'], 'json': ['.json']}
     md = tuple([v for sl in [exts[m] for m in mode] for v in sl])
     dtst = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
     print('#'*79 + '\n{} -  Starting search 4 {} src files...\n'.format(dtst, mode))
@@ -58,12 +61,12 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
             files = os.listdir(d)
             d_src = [f for f in files if f.lower().endswith(md)]
             g_src.extend([os.path.join(d, fl) for fl in d_src])
-            g_log.append('#'*79 + '\nDir: {}\nSrc: {}\n'.format(d, ', '.join(d_src)))
+            g_log.append('Dir: {}\nSrc: {}\n'.format(d, ', '.join(d_src)))
             # calling notepad
             if display and len(d_src) > 0:
                 print('Displaying src files...\n')
                 for s in d_src:
-                    pr = subprocess.Popen(['C:\\Windows\\System32\\notepad.exe', os.path.join(d, s)])
+                    pr = subprocess.Popen([notepad, os.path.join(d, s)])
                     time.sleep(delay)
                     pr.terminate()
     # walking down
@@ -79,12 +82,12 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
                 b_rt = rt.encode(ncod, 'replace')  # converting unicodes back 2 bytes
                 d_src = [f.encode(ncod, 'replace') for f in fls if f.lower().endswith(md)]
                 g_src.extend([os.path.join(b_rt, b_fl) for b_fl in d_src])
-                g_log.append('#'*79 + '\nDir: {}\nSrc: {}\n'.format(b_rt, ', '.join(d_src)))
+                g_log.append('Dir: {}\nSrc: {}\n'.format(b_rt, ', '.join(d_src)))
                 # calling notepad
                 if display and len(d_src) > 0:
                     print('Displaying src files...\n')
                     for s in d_src:
-                        pr = subprocess.Popen(['C:\\Windows\\System32\\notepad.exe', os.path.join(b_rt, s)])
+                        pr = subprocess.Popen([notepad, os.path.join(b_rt, s)])
                         time.sleep(delay)
                         pr.terminate()
     # exit
@@ -98,5 +101,5 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
         ui = raw_input('Reopen all notepad windows now? [y/n] ')
         if 'y' in ui:
             for p in g_src:
-                subprocess.Popen(['C:\\Windows\\System32\\notepad.exe', p])
+                subprocess.Popen([notepad, p])
     return g_src
