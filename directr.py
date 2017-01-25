@@ -23,6 +23,7 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
         list: src files found in given directories
 
     TODO:
+        Swap return type for dictionary so that src files can be located!
         Testing with non-ascii chars..
         
     Examples:
@@ -35,7 +36,7 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
         ['C:\\foo.R', 'C:\\taskschdlr\\task.R']
         # full-blown scan using walk
         >>> dr.sd4src(dirs=['C:\'], log=True, walk=True)
-        ['C:\\foo.R', 'C:\\bar.py', 'C:\\taskschdlr\\task.R', 'C:\\z\\oo.js']
+        ['C:\\foo.R', 'C:\\bar.py', 'C:\\taskschdlr\\task.R', 'C:\\z\\o\\o.js']
     """
     # setup
     g_log = []
