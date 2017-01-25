@@ -23,7 +23,7 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
         list: src files found in given directories
 
     TODO:
-        Swap return type for dictionary so that src files can be located!
+        Swap return type for dictionary so that src files can be located!?!
         Testing with non-ascii chars..
         
     Examples:
@@ -77,7 +77,7 @@ def sd4src(dirs=[os.getcwd()], mode=['r', 'py', 'js'], log=False, walk=False, di
         except ImportError as e:
             print(e + '\npip install scandir or even better from http://www.lfd.uci.edu/~gohlke/pythonlibs/')
         for d in dirs:
-            for rt, drs, fls in scandir.walk(d):  # returns unicodes
+            for rt, drs, fls in scandir.walk(d):  # yields unicodes
                 if u'.git' in drs:  # don't go into any .git directories
                     drs.remove(u'.git')
                 b_rt = rt.encode(ncod, 'replace')  # converting unicodes back 2 bytes
